@@ -4,40 +4,24 @@ import sys
 from selenium.webdriver.common.by import By
 
 service = webdriver.FirefoxService(executable_path="path_to_geckodriver")
-
 driver = webdriver.Firefox(service=service)
-
 url="https://www.instagram.com/"
 
 driver.get(url) 
-
 time.sleep (2)
 
-"""
-On the first project of me which we entered Twitter without using password,we use XPaths of
-elements but in Instagram,when we refresh our website,id number of login url changes so we need
-to use something different to use that link through Python Selenium. Either we can choose class name
-or name selectors to use that.
-"""
-username=driver.find_element(By.NAME,"username")
-username.send_keys ('USER-NAME')
+username=driver.find_element(By.NAME,"email")
+username.send_keys("username")
 
-password =driver.find_element (By.NAME,"password")
-password.send_keys('PASSWORD')
+password =driver.find_element (By.NAME,"pass")
+password.send_keys("password")
 password.submit()
 
-
 time.sleep(10)
-
-
-
 driver.get(sys.argv[1])
-
 time.sleep(4)
 
-
-
-# load "sys.argv[2]" comments 
+# load "sys.argv[2]" number of comments 
 try:
     load_more_comment = driver.find_element(By.XPATH,'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div[1]/div/div[2]/div/div[2]/div/div/ul/li/div/button')
     print("Found {}".format(str(load_more_comment)))
@@ -53,8 +37,18 @@ except Exception as e:
     print(e)
     pass
 
+# Need to rewrite the above method to accomodate for instagram's infinite scroll to read comments
+# Change sys.argv[2] to look at output number and not read more number, or something
 
+#driver.find_element_by_link_text("All").click()
+#for i in range(1,100):
+#    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+#    time.sleep(4)
+#html_source = driver.page_source
+#data = html_source.encode('utf-8')
 
+# Scrapes the comments
+# These class names are outdated too........
 user_names = []
 user_comments = []
 comment = driver.find_elements(By.CLASS_NAME,'_a9ym')
