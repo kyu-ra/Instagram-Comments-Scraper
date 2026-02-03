@@ -1,7 +1,10 @@
-from selenium import webdriver
 import time
 import sys
+from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver import ActionChains
 
 service = webdriver.FirefoxService(executable_path="path_to_geckodriver")
 driver = webdriver.Firefox(service=service)
@@ -10,19 +13,24 @@ url="https://www.instagram.com/"
 driver.get(url) 
 time.sleep (2)
 
-username=driver.find_element(By.NAME,"email")
-username.send_keys("username")
+username = driver.find_element(By.NAME,"email")
+username.send_keys("USERNAME")
 
-password =driver.find_element (By.NAME,"pass")
-password.send_keys("password")
+password = driver.find_element (By.NAME,"pass")
+password.send_keys("PASSWORD")
 password.submit()
 
-time.sleep(10)
+wait = WebDriverWait(driver, timeout=20)
+wait.until(EC.visibility_of_element_located((By.XPATH, "//*[text()='Save info']")))
+# Submits "save info" button
+driver.find_element(By.XPATH, "//*[text()='Save info']").click()
+
+
 driver.get(sys.argv[1])
 time.sleep(4)
 
 # load "sys.argv[2]" number of comments 
-try:
+""" try:
     load_more_comment = driver.find_element(By.XPATH,'/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/div/div[1]/div/div[2]/div/div[2]/div/div/ul/li/div/button')
     print("Found {}".format(str(load_more_comment)))
     i = 0
@@ -35,17 +43,18 @@ try:
         i += 1
 except Exception as e:
     print(e)
-    pass
+    pass """
 
 # Need to rewrite the above method to accomodate for instagram's infinite scroll to read comments
 # Change sys.argv[2] to look at output number and not read more number, or something
 
-#driver.find_element_by_link_text("All").click()
-#for i in range(1,100):
-#    driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-#    time.sleep(4)
-#html_source = driver.page_source
-#data = html_source.encode('utf-8')
+comments = driver.find_element(By.CSS_SELECTOR, ".x5yr21d.xw2csxc.x1odjw0f.x1n2onr6")
+comments.click()
+
+# Scrolling the main window and not the correct element
+for i in range(1,100):
+   driver.execute_script(f"arguments[0].scrollTo(0,{i});", comments)
+   # when do we stop ?
 
 # Scrapes the comments
 # These class names are outdated too........
